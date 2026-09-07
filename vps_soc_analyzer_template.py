@@ -11,7 +11,17 @@ def extract_ip(log_line: str) -> str | None:
     # 1. Проверьте, содержит ли строка 'Failed password'
     # 2. Используйте регулярное выражение для поиска IPv4-адреса после 'from'
     # 3. Верните найденный IP-адрес или None
-    pass
+
+    if "Failed password" in log_line:
+        match = re.search(
+            r"from\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})",
+            log_line
+        )
+
+        if match:
+            return match.group(1)
+
+    return None
 
 def group_by_ip(log_lines: list[str]) -> dict[str, int]:
     """
@@ -24,7 +34,16 @@ def group_by_ip(log_lines: list[str]) -> dict[str, int]:
     # 3. Извлеките IP-адрес из каждой строки с помощью функции extract_ip
     # 4. Если IP найден, обновите счетчик в словаре
     # 5. Верните полученный словарь
-    pass
+    
+    attacks: dict[str, int] = {}
+
+    for line in log_lines:
+        ip = extract_ip(line)
+
+        if ip:
+            attacks[ip] = attacks.get(ip, 0) + 1
+
+    return attacks
 
 def detect_brute_force(ip_counts: dict[str, int], threshold: int = 5) -> list[str]:
     """
@@ -35,7 +54,14 @@ def detect_brute_force(ip_counts: dict[str, int], threshold: int = 5) -> list[st
     # 1. Проанализируйте переданный словарь ip_counts
     # 2. Выберите все IP, у которых количество попыток больше или равно threshold
     # 3. Верните список этих IP-адресов
-    pass
+    #pass
+    alerts: list[str] = []
+
+    for ip, count in ip_counts.items():
+        if count >= threshold:
+            alerts.append(ip)
+
+    return alerts
 
 def detect_suspicious_paths(log_line: str) -> bool:
     """
@@ -47,7 +73,23 @@ def detect_suspicious_paths(log_line: str) -> bool:
     # 2. Приведите строку лога к нижнему регистру
     # 3. Проверьте, содержится ли хотя бы одна сигнатура в строке
     # 4. Верните True, если сигнатура найдена, иначе False
-    pass
+    #pass
+    signatures = [
+        "/etc/passwd",
+        ".env",
+        "wp-admin",
+        "select+union",
+        "union+select",
+        "shell.php"
+    ]
+
+    log_line = log_line.lower()
+
+    for signature in signatures:
+        if signature in log_line:
+            return True
+
+    return False
 
 def calculate_risk_score(brute_force_alerts: int, web_alerts: int) -> str:
     """
@@ -59,7 +101,16 @@ def calculate_risk_score(brute_force_alerts: int, web_alerts: int) -> str:
     # 2. Если балл равен 0 -> верните "LOW"
     # 3. Если балл меньше 5 -> верните "MEDIUM"
     # 4. В остальных случаях -> верните "HIGH"
-    pass
+    #pass
+    risk_score = brute_force_alerts * 3 + web_alerts
+
+    if risk_score == 0:
+        return "LOW"
+
+    if risk_score < 5:
+        return "MEDIUM"
+
+    return "HIGH"
 
 def is_port_open(ip: str, port: int, timeout: float = 1.0) -> bool:
     """
@@ -72,7 +123,23 @@ def is_port_open(ip: str, port: int, timeout: float = 1.0) -> bool:
     # 3. Попробуйте подключиться к (ip, port) с помощью метода connect_ex
     # 4. Метод возвращает 0 при успешном подключении (порт открыт)
     # 5. Обработайте возможные исключения и верните результат (True/False)
-    pass
+    #pass
+    try:
+        sock = socket.socket(
+            socket.AF_INET,
+            socket.SOCK_STREAM
+        )
+
+        sock.settimeout(timeout)
+
+        result = sock.connect_ex((ip, port))
+
+        sock.close()
+
+        return result == 0
+
+    except (socket.timeout, socket.error, OSError):
+        return False
 
 def get_file_hash(filepath: str) -> str:
     """
@@ -85,4 +152,20 @@ def get_file_hash(filepath: str) -> str:
     # 3. Прочитайте файл порциями (блоками) и обновите хеш
     # 4. Верните строковое представление хеша в шестнадцатеричном виде (hexdigest)
     # 5. Если файл не найден (FileNotFoundError), верните строку "FILE_NOT_FOUND"
-    pass
+    #pass
+    sha256_hash = hashlib.sha256()
+
+    try:
+        with open(filepath, "rb") as file:
+            while True:
+                block = file.read(4096)
+
+                if not block:
+                    break
+
+                sha256_hash.update(block)
+
+        return sha256_hash.hexdigest()
+
+    except FileNotFoundError:
+        return "FILE_NOT_FOUND"

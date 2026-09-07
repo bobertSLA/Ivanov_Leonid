@@ -18,7 +18,7 @@ except ImportError:
     print("[!] Не найден файл vps_soc_analyzer.py. Переименуйте шаблон или создайте его!")
     sys.exit(1)
 
-def run_pipeline():
+def run_pipeline() -> None:
     print("=" * 60)
     print("ЗАПУСК КОНВЕЙЕРА (PIPELINE) МИНИ-SOC НА VPS (СТУДЕНЧЕСКИЙ ШАБЛОН)")
     print("=" * 60)
@@ -47,7 +47,7 @@ def run_pipeline():
         
     # TODO: Вызовите функцию группировки по IP из модуля analyzer
     # ip_attempts = ...
-    ip_attempts = {} # Заглушка
+    ip_attempts = analyzer.group_by_ip(ssh_logs) # Заглушка
     
     print(f"    - Всего уникальных IP, совершивших неудачный вход: {len(ip_attempts)}")
     for ip, count in sorted(ip_attempts.items(), key=lambda x: x[1], reverse=True)[:3]:
@@ -55,7 +55,10 @@ def run_pipeline():
         
     # TODO: Вызовите функцию детектора брутфорса
     # bf_alerts = ...
-    bf_alerts = [] # Заглушка
+    bf_alerts = analyzer.detect_brute_force(
+    ip_attempts,
+    threshold=5
+)
     
     print(f"    - ОБНАРУЖЕНО БРУТФОРС-АТАК (>= 5 попыток): {len(bf_alerts)}")
     for ip in bf_alerts:
@@ -72,7 +75,7 @@ def run_pipeline():
     for line in nginx_logs:
         # TODO: Проверьте строку на наличие веб-атак с помощью функции из analyzer
         # is_suspicious = ...
-        is_suspicious = False # Заглушка
+        is_suspicious = analyzer.detect_suspicious_paths(line)
         
         if is_suspicious:
             web_alerts_count += 1
@@ -88,7 +91,10 @@ def run_pipeline():
     print("[4] Оценка уровня угрозы VPS (Risk Scoring):")
     # TODO: Рассчитайте уровень риска с помощью функции из analyzer
     # risk = ...
-    risk = "NOT_IMPLEMENTED" # Заглушка
+    risk = analyzer.calculate_risk_score(
+        len(bf_alerts),
+        web_alerts_count
+    )
     
     print(f"    - УРОВЕНЬ РИСКА ДЛЯ VPS: **{risk}**")
     print("-" * 60)
@@ -102,7 +108,9 @@ def run_pipeline():
     
     # TODO: Рассчитайте хеш-сумму исходного файла с помощью функции из analyzer
     # hash_original = ...
-    hash_original = "None" # Заглушка
+    hash_original = analyzer.get_file_hash(
+        dummy_config
+    )
     print(f"    - Хеш-сумма файла {dummy_config} (SHA-256): {hash_original}")
     
     # Симулируем несанкционированное изменение (взлом)
@@ -111,7 +119,9 @@ def run_pipeline():
         
     # TODO: Рассчитайте хеш-сумму измененного файла
     # hash_modified = ...
-    hash_modified = "None" # Заглушка
+    hash_modified = analyzer.get_file_hash(
+        dummy_config
+    )
     print(f"    - Хеш-сумма после изменения: {hash_modified}")
     
     if hash_original != hash_modified:
@@ -127,7 +137,10 @@ def run_pipeline():
     for port in ports_to_scan:
         # TODO: Проверьте статус порта с помощью функции из analyzer
         # is_open = ...
-        is_open = False # Заглушка
+        is_open = analyzer.is_port_open(
+            "127.0.0.1",
+            port
+        )
         
         status = "ОТКРЫТ" if is_open else "ЗАКРЫТ"
         print(f"      * Порт {port}: {status}")
