@@ -5,18 +5,18 @@ import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Импортируем симулятор генерации логов
-try:
-    from vps_log_generator import generate_mock_ssh_logs, generate_mock_nginx_logs
-except ImportError:
-    print("[!] Не найден файл vps_log_generator.py. Убедитесь, что он лежит в той же папке!")
-    sys.exit(1)
+# try:
+#     from vps_log_generator import generate_mock_ssh_logs, generate_mock_nginx_logs
+# except ImportError:
+#     print("[!] Не найден файл vps_log_generator.py. Убедитесь, что он лежит в той же папке!")
+#     sys.exit(1)
 
-# Импортируем студенческий модуль аналитики
-try:
-    import vps_soc_analyzer as analyzer
-except ImportError:
-    print("[!] Не найден файл vps_soc_analyzer.py. Переименуйте шаблон или создайте его!")
-    sys.exit(1)
+# # Импортируем студенческий модуль аналитики
+# try:
+#     import vps_soc_analyzer as analyzer
+# except ImportError:
+#     print("[!] Не найден файл vps_soc_analyzer.py. Переименуйте шаблон или создайте его!")
+#     sys.exit(1)
 
 def run_pipeline():
     print("=" * 60)
@@ -27,9 +27,8 @@ def run_pipeline():
     print("[1] Симуляция: Создаем искусственные логи на сервере...")
     mock_ssh_lines = generate_mock_ssh_logs(num_lines=100)
     mock_nginx_lines = generate_mock_nginx_logs(num_lines=50)
-    
-    ssh_log_path = "mock_auth.log"
-    nginx_log_path = "mock_nginx_access.log"
+    ssh_log_path = os.path.expanduser("~/logs/auth.log")
+    nginx_log_path = os.path.expanduser("~/logs/auth.log")
     
     with open(ssh_log_path, "w") as f:
         f.writelines([line + "\n" for line in mock_ssh_lines])
@@ -88,7 +87,7 @@ def run_pipeline():
     print("[4] Оценка уровня угрозы VPS (Risk Scoring):")
     # TODO: Рассчитайте уровень риска с помощью функции из analyzer
     # risk = ...
-    risk = "NOT_IMPLEMENTED" # Заглушка    
+    risk = analyzer.calculate_risk_score(len(bf_alerts), web_alerts_count)
     print(f"    - УРОВЕНЬ РИСКА ДЛЯ VPS: **{risk}**")
     print("-" * 60)
 
