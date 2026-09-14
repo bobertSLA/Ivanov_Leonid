@@ -25,8 +25,8 @@ def run_pipeline():
 
     # Шаг 1: Симуляция/Генерация данных на сервере (Уже реализовано)
     print("[1] Симуляция: Создаем искусственные логи на сервере...")
-    mock_ssh_lines = generate_mock_ssh_logs(num_lines=100)
-    mock_nginx_lines = generate_mock_nginx_logs(num_lines=50)
+    # mock_ssh_lines = generate_mock_ssh_logs(num_lines=100)
+    # mock_nginx_lines = generate_mock_nginx_logs(num_lines=50)
     ssh_log_path = os.path.expanduser("~/logs/auth.log")
     nginx_log_path = os.path.expanduser("~/logs/auth.log")
     
