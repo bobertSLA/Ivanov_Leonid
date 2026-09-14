@@ -22,18 +22,16 @@ def group_by_ip(log_lines: list[str]) -> dict[str, int]:
     Кейс 2: Группировка атак по IP (Агрегация через dict).
     Подсчитывает общее число неудачных попыток входа для каждого IP-адреса.
     """
-    # TODO: Напишите код функции
-    # 1. Создайте пустой словарь для подсчета
-    # 2. Пройдите циклом по всем строкам логов
-    # 3. Извлеките IP-адрес из каждой строки с помощью функции extract_ip
-    # 4. Если IP найден, обновите счетчик в словаре
-    # 5. Верните полученный словарь
+
+
     attacks: dict[str, int] = {}
     for line in log_lines:
         ip = extract_ip(line)
         if ip:
             attacks[ip] = attacks.get(ip, 0) + 1
+    print(f'**********\n{attacks}\n***********')
     return attacks
+    
 
 def detect_brute_force(ip_counts: dict[str, int], threshold: int = 5) -> list[str]:
     """
