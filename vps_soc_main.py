@@ -24,20 +24,20 @@ def run_pipeline():
     print("=" * 60)
 
     # Шаг 1: Симуляция/Генерация данных на сервере (Уже реализовано)
-    print("[1] Симуляция: Создаем искусственные логи на сервере...")
+    # print("[1] Симуляция: Создаем искусственные логи на сервере...")
     # mock_ssh_lines = generate_mock_ssh_logs(num_lines=100)
     # mock_nginx_lines = generate_mock_nginx_logs(num_lines=50)
     ssh_log_path = os.path.expanduser("~/logs/auth.log")
     nginx_log_path = os.path.expanduser("~/logs/auth.log")
     
-    with open(ssh_log_path, "w") as f:
-        f.writelines([line + "\n" for line in mock_ssh_lines])
-    with open(nginx_log_path, "w") as f:
-        f.writelines([line + "\n" for line in mock_nginx_lines])
+    # with open(ssh_log_path, "w") as f:
+    #     f.writelines([line + "\n" for line in mock_ssh_lines])
+    # with open(nginx_log_path, "w") as f:
+    #     f.writelines([line + "\n" for line in mock_nginx_lines])
         
-    print(f"    - Сгенерировано строк SSH: {len(mock_ssh_lines)} (сохранено в {ssh_log_path})")
-    print(f"    - Сгенерировано строк Nginx: {len(mock_nginx_lines)} (сохранено в {nginx_log_path})")
-    print("-" * 60)
+    # print(f"    - Сгенерировано строк SSH: {len(mock_ssh_lines)} (сохранено в {ssh_log_path})")
+    # print(f"    - Сгенерировано строк Nginx: {len(mock_nginx_lines)} (сохранено в {nginx_log_path})")
+    # print("-" * 60)
 
     # Шаг 2: Анализ логов SSH (Брутфорс)
     print("[2] Анализ SSH логов:")
